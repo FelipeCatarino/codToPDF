@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 public class GeradorPDFDeCodigo {
 
     public static void main(String[] args) throws Exception {
-        String caminhoBase = "C:/xampp/htdocs/testes/Meets";  // << troque aqui
+        String caminhoBase = "C:\\Users\\Aluno\\Documents\\GitHub\\Fatec_Meets_Web";  // << troque aqui pelo caminho da pasta do seu código
         Path basePath = Paths.get(caminhoBase);
         String nomeDoPDF = "codigo_unificado.pdf";
 
@@ -28,7 +28,12 @@ public class GeradorPDFDeCodigo {
         try (Stream<Path> caminhos = Files.walk(Paths.get(caminhoBase))) {
             List<Path> arquivos = caminhos
                     .filter(Files::isRegularFile)
+                    //troque as pastas abaixo comforme a sua necessidade
                     .filter(path -> !path.toString().contains(".git"))
+                    .filter(path -> !path.toString().contains("Docs"))
+                    .filter(path -> !path.toString().contains("off"))
+                    .filter(path -> !path.toString().contains("uploads"))
+                    .filter(path -> !path.toString().contains("imagens"))
                     .collect(Collectors.toList());
 
             for (Path arquivo : arquivos) {
