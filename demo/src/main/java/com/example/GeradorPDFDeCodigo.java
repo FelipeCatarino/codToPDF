@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 public class GeradorPDFDeCodigo {
 
     public static void main(String[] args) throws Exception {
-        String caminhoBase = "C:\\Users\\Aluno\\Documents\\GitHub\\Fatec_Meets_Web";  // << troque aqui pelo caminho da pasta do seu código
+        String caminhoBase = "C:\\Users\\Felipe\\Documents\\GitHub\\Fatec_Meets_Web";  // << troque aqui pelo caminho da pasta do seu código
         Path basePath = Paths.get(caminhoBase);
         String nomeDoPDF = "codigo_unificado.pdf";
 
@@ -34,7 +34,17 @@ public class GeradorPDFDeCodigo {
                     .filter(path -> !path.toString().contains("off"))
                     .filter(path -> !path.toString().contains("uploads"))
                     .filter(path -> !path.toString().contains("imagens"))
+                    .sorted() // Adiciona esta linha para ordenar os arquivos
                     .collect(Collectors.toList());
+
+            // Adiciona sumário ao PDF
+            Paragraph sumario = new Paragraph("Sumário\n\n", tituloFont);
+            for (Path arquivo : arquivos) {
+                String nomeArquivo = basePath.relativize(arquivo).toString();
+                sumario.add(new Paragraph(nomeArquivo, codigoFont));
+            }
+            document.add(sumario);
+            document.newPage();
 
             for (Path arquivo : arquivos) {
                 String nomeArquivo = basePath.relativize(arquivo).toString();
@@ -44,11 +54,13 @@ public class GeradorPDFDeCodigo {
                 document.add(titulo);
 
                 // Lê conteúdo e adiciona como código
-                List<String> linhas = Files.readAllLines(arquivo);
+                List<String> linhas = Files.readAllLines(arquivo, java.nio.charset.StandardCharsets.UTF_8);
                 String conteudo = String.join("\n", linhas);
 
                 Paragraph codigo = new Paragraph(conteudo + "\n\n", codigoFont);
                 document.add(codigo);
+                // Adiciona uma linha em branco para separar arquivos
+                document.add(new Paragraph(" "));
             }
 
         } catch (IOException e) {
